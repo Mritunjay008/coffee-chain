@@ -22,3 +22,18 @@ jobs:
       # Run the linter
       - name: Check linting
         run: npm run lint
+  
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npm run lint
+      # Heavy jobs which is important
+      - name: testing code
+        run: npm test
+      
