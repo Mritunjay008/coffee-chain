@@ -1,0 +1,24 @@
+name: deploy coffee chain
+on: 
+  push:
+    branches: [master, dev]
+  pull_request:
+    branches: [master]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      # Download codebase
+      - name: checkout repository
+        uses: actions/checkout@v7
+      # Setup with correct runtime environment
+      - name: Set up environment
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      # Installing dependencies
+      - name: Installing all dependencies
+        run: npm ci 
+      # Run the linter
+      - name: Check linting
+        run: npm run lint
