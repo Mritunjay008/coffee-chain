@@ -1,9 +1,9 @@
 name: deploy coffee chain
 on: 
   push:
-    branches: [master, dev]
+    branches: [master, main, dev]
   pull_request:
-    branches: [master]
+    branches: [master, main]
 jobs:
   lint:
     runs-on: ubuntu-latest
