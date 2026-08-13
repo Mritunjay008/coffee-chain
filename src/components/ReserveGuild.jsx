@@ -17,6 +17,7 @@ export default function ReserveGuild() {
 
   const handleSubscribe = () => {
     setSubSuccess(true);
+    setUserPoints(prev => prev + 100);
     setTimeout(() => setSubSuccess(false), 4000);
   };
 

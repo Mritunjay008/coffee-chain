@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Calendar, Clock, Users, MapPin, CheckCircle, Sparkles } from 'lucide-react';
+import { X, Calendar, CheckCircle, Sparkles } from 'lucide-react';
 import { SANCTUARIES } from '../data/coffeeData';
 
 export default function BookingModal({ isOpen, onClose, selectedStore }) {

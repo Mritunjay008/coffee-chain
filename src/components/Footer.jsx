@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Coffee, ShieldCheck, Mail, ArrowRight, Heart } from 'lucide-react';
+import { Coffee, ShieldCheck, ArrowRight } from 'lucide-react';
 
 export default function Footer({ setActiveTab, openBooking }) {
   const [email, setEmail] = useState('');

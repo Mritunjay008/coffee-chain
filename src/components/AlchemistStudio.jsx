@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sliders, Sparkles, Coffee, Flame, Droplets, CheckCircle, Plus } from 'lucide-react';
+import { Sliders, Coffee, Flame, Droplets, CheckCircle, Plus } from 'lucide-react';
 
 const ORIGINS = [
   { id: 'ethiopian', name: 'Ethiopian Gesha Village', elevation: '1,950m', basePrice: 14.0, notes: 'Floral, Jasmine, Bergamot', acidityMod: 3, bodyMod: 0, sweetnessMod: 2 },
@@ -220,7 +220,7 @@ export default function AlchemistStudio({ onAddToCart }) {
               </div>
 
               {/* Infusion Choice */}
-              <div>
+              <div style={{ marginBottom: '1.2rem' }}>
                 <label style={{ fontSize: '0.8rem', color: '#a39992', display: 'block', marginBottom: '0.5rem' }}>Aromatic Infusion:</label>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {INFUSIONS.map((inf) => (
@@ -242,6 +242,22 @@ export default function AlchemistStudio({ onAddToCart }) {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Sweetness Pumps Slider */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+                  <span>Natural Sweetness Intensity:</span>
+                  <strong style={{ color: '#d4a359' }}>{sweetnessPumps} {sweetnessPumps === 1 ? 'Pump' : 'Pumps'}</strong>
+                </div>
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="4" 
+                  value={sweetnessPumps} 
+                  onChange={(e) => setSweetnessPumps(parseInt(e.target.value))}
+                  style={{ width: '100%', cursor: 'pointer' }} 
+                />
               </div>
 
             </div>
