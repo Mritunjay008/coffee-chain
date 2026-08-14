@@ -1,39 +1,106 @@
-name: deploy coffee chain
-on: 
-  push:
-    branches: [master, main, dev]
-  pull_request:
-    branches: [master, main]
+name: Lint test and deploy on push
+on: push
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      # Download codebase
-      - name: checkout repository
+      - name: code checkout
         uses: actions/checkout@v7
-      # Setup with correct runtime environment
-      - name: Set up environment
+
+      - name: cache Dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm install
+
+      - name: lint code
+        run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: code checkout
+        uses: actions/checkout@v7
+
+      - name: cache Dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm install
+
+      - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
           node-version: 24
-      # Installing dependencies
-      - name: Installing all dependencies
-        run: npm ci 
-      # Run the linter
-      - name: Check linting
-        run: npm run lint
-  
-  test:
-    needs: lint
+          cache: 'npm'
+
+      - name: Test code
+        id: run-test
+        run: npm run test
+
+      - name: Upload test report
+        if: failure() && steps.run-test.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test-results.json
+
+  build:
+    needs: [lint, test]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - name: code checkout
+        uses: actions/checkout@v7
+
+      - name: cache Dependencies
+        id: cache
+        uses: actions/cache@v4
         with:
-          node-version: 24
-      - run: npm ci
-      - run: npm run lint
-      # Heavy jobs which is important
-      - name: testing code
-        run: npm test
-      
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm install
+
+      - name: build
+        run: npm run build
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: deployement
+        run: echo "Deploying"
+      - name: Get build Artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: dist-files
+      - name: Output Contents
+        run: ls
+
+  report: 
+    needs: [lint, build, deploy, test]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output Information
+        run: |
+          echo "Something went wrong" 
+          echo "${{ toJSON(github) }}"
